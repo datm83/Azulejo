@@ -1,0 +1,41 @@
+AZULEJO DAS PALAVRAS - versão app (PWA)
+=======================================
+
+Conteúdo da pasta
+- index.html            o jogo
+- manifest.webmanifest  nome, cores e ícones da app
+- sw.js                 permite jogar sem internet
+- icons/                ícones da app
+
+1) PUBLICAR ONLINE (escolha uma opção)
+
+Netlify (mais simples, grátis)
+  1. Abra https://app.netlify.com/drop e crie conta (pode usar a conta Google/GitHub).
+  2. Arraste esta pasta inteira (descompactada) para a página.
+  3. Recebe um link do tipo https://nome-aleatorio.netlify.app
+     Em "Site configuration" pode mudar o nome, ex.: azulejo-palavras.netlify.app
+
+GitHub Pages (grátis)
+  1. Crie um repositório público no GitHub, ex.: azulejo
+  2. Carregue todos os ficheiros desta pasta (Add file > Upload files).
+  3. Settings > Pages > Branch: main / (root) > Save.
+  4. Após 1-2 minutos: https://<o-seu-utilizador>.github.io/azulejo/
+
+Nota: a app tem de estar num endereço https. Aberta como ficheiro local
+funciona como jogo, mas não se instala nem joga offline.
+
+2) INSTALAR NO TELEMÓVEL
+
+iPhone / iPad
+  Abrir o link no Safari > botão Partilhar > "Adicionar ao ecrã principal".
+
+Android
+  Abrir o link no Chrome > menu (3 pontos) > "Instalar app"
+  (ou "Adicionar ao ecrã principal").
+
+Depois de aberta uma vez, a app funciona sem internet.
+
+3) ATUALIZAR A APP
+  Substitua os ficheiros no site e, em sw.js, mude VERSION
+  (ex.: 'azulejo-v1' para 'azulejo-v2'). Os telemóveis recebem a
+  nova versão na próxima vez que abrirem a app com internet.

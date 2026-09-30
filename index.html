@@ -20,7 +20,7 @@
 :root{
   --ground:#EEF1F6; --surface:#FFFFFF; --ink:#16223A; --muted:#5B6782; --line:#C9D1E0;
   --cobalt:#1F4E9C; --cobalt-soft:#DCE5F4;
-  --ok:#2F8A57; --near:#C9901F; --off:#7B859B; --key:#DCE2EC; --key-ink:#16223A;
+  --ok:#2F8A57; --near:#C9901F; --off:#E9918C; --off-ink:#FFFFFF; --key:#DCE2EC; --key-ink:#16223A;
   --tile-empty:#FFFFFF; --on-color:#FFFFFF;
   --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --body:"Figtree", "Segoe UI", system-ui, sans-serif;
@@ -30,7 +30,7 @@
     color-scheme:dark;
     --ground:#0E1524; --surface:#16203A; --ink:#E8EDF7; --muted:#9AA6C0; --line:#2C3A5C;
     --cobalt:#7FA6EC; --cobalt-soft:#1C2B4E;
-    --ok:#3FA56C; --near:#D6A232; --off:#3F4A63; --key:#27324D; --key-ink:#E8EDF7;
+    --ok:#3FA56C; --near:#D6A232; --off:#D9807A; --off-ink:#FFFFFF; --key:#33406A; --key-ink:#E8EDF7;
     --tile-empty:#121B30; --on-color:#FFFFFF;
   }
 }
@@ -38,7 +38,7 @@
   color-scheme:dark;
   --ground:#0E1524; --surface:#16203A; --ink:#E8EDF7; --muted:#9AA6C0; --line:#2C3A5C;
   --cobalt:#7FA6EC; --cobalt-soft:#1C2B4E;
-  --ok:#3FA56C; --near:#D6A232; --off:#3F4A63; --key:#27324D; --key-ink:#E8EDF7;
+  --ok:#3FA56C; --near:#D6A232; --off:#D9807A; --off-ink:#FFFFFF; --key:#33406A; --key-ink:#E8EDF7;
   --tile-empty:#121B30; --on-color:#FFFFFF;
 }
 *{box-sizing:border-box}
@@ -91,11 +91,14 @@ button:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
 @keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 .tile{width:var(--t2);height:var(--t2);display:grid;place-items:center;font:700 calc(var(--t2)*.5)/1 var(--display);text-transform:uppercase;border:2px solid var(--line);border-radius:6px;background:var(--tile-empty);color:var(--ink);position:relative;user-select:none}
 .tile.filled{border-color:var(--muted)}
-.tile.cur{border-color:var(--cobalt)}
+.tile.cur{border-color:var(--cobalt);box-shadow:0 0 0 2px var(--cobalt) inset}
+.row.active .tile{cursor:pointer}
+.hint{font-size:12px;color:var(--muted);text-align:center;margin:-6px 0 0}
 .row.active .tile{background:var(--surface)}
 .tile.ok,.tile.near,.tile.off{color:var(--on-color);border-color:transparent}
+.tile.off,.key.off{color:var(--off-ink);text-shadow:0 1px 1px rgba(90,20,20,.35)}
 .tile.ok{background:var(--ok)} .tile.near{background:var(--near)} .tile.off{background:var(--off)}
-.tile.ok::after,.tile.near::after{content:"";position:absolute;inset:3px;border-radius:3px;background:
+.tile.ok::after,.tile.near::after,.tile.off::after,.key.ok::after,.key.near::after,.key.off::after{content:"";position:absolute;inset:3px;border-radius:3px;background:
   radial-gradient(circle at 0 0, rgba(255,255,255,.28) 0 18%, transparent 19%),
   radial-gradient(circle at 100% 0, rgba(255,255,255,.28) 0 18%, transparent 19%),
   radial-gradient(circle at 0 100%, rgba(255,255,255,.28) 0 18%, transparent 19%),
@@ -109,7 +112,9 @@ button:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
 .kr{display:flex;gap:5px;justify-content:center}
 .key{flex:1;max-width:44px;height:52px;border:0;border-radius:7px;background:var(--key);color:var(--key-ink);font:700 15px var(--display);text-transform:uppercase;cursor:pointer;display:grid;place-items:center;padding:0}
 .key.wide{max-width:72px;flex:1.6;font:600 12px var(--body);text-transform:none}
-.key.ok{background:var(--ok);color:var(--on-color)} .key.near{background:var(--near);color:var(--on-color)} .key.off{background:var(--off);color:var(--on-color);opacity:.75}
+.key.ok{background:var(--ok);color:var(--on-color)} .key.near{background:var(--near);color:var(--on-color)} .key.off{background:var(--off)}
+.key{position:relative}
+.key.ok::after,.key.near::after,.key.off::after{inset:2px}
 .end{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .end h2{font-family:var(--display);font-size:19px;margin:0}
 .end p{margin:0;color:var(--muted)}
@@ -121,8 +126,33 @@ button:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
 .btns{display:flex;gap:8px;flex-wrap:wrap}
 .btn{font:600 14px var(--body);background:var(--cobalt);color:var(--on-color);border:0;border-radius:9px;padding:10px 16px;cursor:pointer}
 .btn.ghost{background:transparent;color:var(--cobalt);border:1.5px solid var(--cobalt)}
+
+.score{display:flex;align-items:center;gap:10px;font-variant-numeric:tabular-nums}
+.pill{background:var(--cobalt-soft);color:var(--cobalt);border-radius:999px;padding:3px 10px;font:700 13px var(--display)}
+.record{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.record-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.record-top b{font:800 34px/1 var(--display);color:var(--cobalt);font-variant-numeric:tabular-nums}
+.record-top span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.run{font-size:13px;color:var(--muted)}
+.run b{color:var(--ink)}
+.top{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-variant-numeric:tabular-nums}
+.top li{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:baseline;font-size:13px;color:var(--muted)}
+.top li b{color:var(--ink);font-family:var(--display);font-size:15px}
+.top li .pos{color:var(--muted);font-weight:600}
+.ptable{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.ptable td{padding:4px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+.ptable td:last-child{text-align:right;color:var(--ink);font-weight:600}
+.gain{font:800 26px var(--display);color:var(--ok)}
+.calc{font-size:13px;color:var(--muted)}
+.newrec{display:inline-block;background:var(--near);color:var(--on-color);border-radius:6px;padding:2px 8px;font:700 12px var(--body);text-transform:uppercase;letter-spacing:.06em}
+.warn{font-size:13px;color:var(--near);margin:-12px 0 0;text-align:center}
 @media (prefers-reduced-motion: reduce){.tile.flip,.row.shake{animation:none}}
 @media (max-width:420px){.key{height:48px;font-size:14px}.kr{gap:4px}.choices.c3 .choice span{font-size:11px}}
+.tiletitle{display:flex;flex-direction:column;align-items:center;align-self:stretch;gap:6px;margin:0;--t2:min(42px,calc((min(100vw,560px) - 32px - 7*5px)/8))}
+.tw{display:flex;gap:5px}
+.tiletitle .tile{width:var(--t2);height:var(--t2);border-radius:6px;font-size:calc(var(--t2)*.5);border-width:0}
+.hero{align-items:center;text-align:center}
+.hero p{margin-inline:auto}
 </style>
 </head>
 <body>
@@ -132,10 +162,7 @@ button:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
   <!-- HOME -->
   <section class="home" id="home">
     <div class="hero">
-      <div class="hero-tiles" aria-hidden="true">
-        <div class="tile ok">P</div><div class="tile near">A</div><div class="tile off">L</div><div class="tile ok">A</div><div class="tile near">V</div>
-      </div>
-      <h1>Azulejo <span>das Palavras</span></h1>
+      <h1 class="tiletitle" aria-label="Azulejo das Palavras"><span class="tw"><span class="tile ok" aria-hidden="true">A</span><span class="tile near" aria-hidden="true">Z</span><span class="tile off" aria-hidden="true">U</span><span class="tile ok" aria-hidden="true">L</span><span class="tile near" aria-hidden="true">E</span><span class="tile off" aria-hidden="true">J</span><span class="tile ok" aria-hidden="true">O</span></span><span class="tw"><span class="tile near" aria-hidden="true">D</span><span class="tile off" aria-hidden="true">A</span><span class="tile ok" aria-hidden="true">S</span></span><span class="tw"><span class="tile near" aria-hidden="true">P</span><span class="tile off" aria-hidden="true">A</span><span class="tile ok" aria-hidden="true">L</span><span class="tile near" aria-hidden="true">A</span><span class="tile off" aria-hidden="true">V</span><span class="tile ok" aria-hidden="true">R</span><span class="tile near" aria-hidden="true">A</span><span class="tile off" aria-hidden="true">S</span></span></h1>
       <p>Descubra a palavra secreta. Em cada tentativa, as cores dizem quais letras estão no lugar certo, quais existem noutro lugar e quais não existem.</p>
     </div>
 
@@ -160,15 +187,25 @@ button:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
       </div></div>
 
     <button class="play" id="play">Jogar</button>
+    <p class="warn" id="warn" hidden>Há um jogo a meio. Mudar as opções conta como palavra falhada e termina a série.</p>
 
     <div class="rules">
       <h2>Como se joga</h2>
       <div class="exrow"><div class="ex"><div class="tile ok">N</div><div class="tile">U</div><div class="tile">V</div><div class="tile">E</div><div class="tile">M</div></div><p><b style="color:var(--ok)">Verde</b>: a letra está no lugar certo.</p></div>
       <div class="exrow"><div class="ex"><div class="tile">P</div><div class="tile">R</div><div class="tile near">E</div><div class="tile">S</div><div class="tile">A</div></div><p><b style="color:var(--near)">Amarelo</b>: a letra existe, mas noutro lugar.</p></div>
-      <div class="exrow"><div class="ex"><div class="tile">C</div><div class="tile off">L</div><div class="tile">U</div><div class="tile">B</div><div class="tile">E</div></div><p><b style="color:var(--muted)">Cinzento</b>: a letra não existe na palavra.</p></div>
+      <div class="exrow"><div class="ex"><div class="tile">C</div><div class="tile off">L</div><div class="tile">U</div><div class="tile">B</div><div class="tile">E</div></div><p><b style="color:var(--off)">Vermelho</b>: a letra não existe na palavra.</p></div>
       <p>Acentos e ç são preenchidos sozinhos. As letras podem repetir-se.</p>
+      <h2>Pontuação</h2>
+      <p>Cada palavra certa soma pontos à sua série. A série acaba quando falhar uma palavra, e o total conta para o recorde.</p>
+      <table class="ptable"><tbody>
+        <tr><td>Pontos base</td><td>4 letras 100 · 5 letras 150 · 6 letras 200</td></tr>
+        <tr><td>Multiplicador</td><td>Fácil ×1 · Normal ×2 · Difícil ×3</td></tr>
+        <tr><td>Tentativas</td><td>quanto menos usar, mais pontos</td></tr>
+      </tbody></table>
+      <p id="example"></p>
     </div>
 
+    <div class="opt"><h2>Recorde</h2><div class="record" id="record"></div></div>
     <div class="opt"><h2>As suas estatísticas</h2><div class="stats" id="homeStats"></div></div>
   </section>
 
@@ -179,8 +216,10 @@ button:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
       <div class="gtitle"><svg class="mark" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="6" fill="var(--cobalt)"/><circle cx="0" cy="0" r="8" fill="var(--ground)"/><circle cx="34" cy="0" r="8" fill="var(--ground)"/><circle cx="0" cy="34" r="8" fill="var(--ground)"/><circle cx="34" cy="34" r="8" fill="var(--ground)"/><path d="M17 8 L26 17 L17 26 L8 17 Z" fill="none" stroke="var(--ground)" stroke-width="2.4"/><circle cx="17" cy="17" r="3" fill="var(--ground)"/></svg>Azulejo</div>
     </div>
     <div class="status"><span id="info"></span><span id="left"></span></div>
+    <div class="status"><span class="score"><span class="pill" id="runPts">0 pts</span><span id="runWords"></span></span><span id="recLine"></span></div>
     <div class="board-wrap"><div class="toast" id="toast" hidden></div><div class="board" id="board"></div></div>
     <div class="legend"><span><i style="background:var(--ok)"></i>Lugar certo</span><span><i style="background:var(--near)"></i>Existe, noutro lugar</span><span><i style="background:var(--off)"></i>Não existe</span></div>
+    <p class="hint" id="hint">Toque numa casa para escrever nessa posição.</p>
     <section class="end" id="end" hidden></section>
     <div class="kb" id="kb"></div>
   </section>
@@ -202,9 +241,16 @@ let prefs = store.get('az-prefs2',{v:'pt',len:5,tries:6});
 if(!['pt','br'].includes(prefs.v)) prefs.v='pt';
 if(![4,5,6].includes(prefs.len)) prefs.len=5;
 if(![4,6,10].includes(prefs.tries)) prefs.tries=6;
-let S = null, screen = 'home';
+let S = store.get('az-cur', null), screen = 'home';
+let RUN = store.get('az-run', {pts:0, words:0});
+function save(){ store.set('az-cur', S); store.set('az-run', RUN); }
+const BASE={4:100,5:150,6:200}, MULT={10:1,6:2,4:3};
+function points(len, tries, used){ return Math.round(BASE[len]*MULT[tries]*(tries-used+1)/tries); }
+function getRec(){ return store.get('az-rec',{best:0,top:[]}); }
 
 /* ---------- home ---------- */
+function inProgress(){ return S && !S.done && S.guesses.length>0; }
+function differs(){ return S && (S.v!==prefs.v || S.len!==prefs.len || S.tries!==prefs.tries); }
 function renderHome(){
   document.querySelectorAll('#optVar .choice').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===prefs.v));
   document.querySelectorAll('#optLen .choice').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.v===prefs.len));
@@ -212,19 +258,46 @@ function renderHome(){
   [4,5,6].forEach(n=>$('n'+n).textContent = fmt(SECRET[prefs.v][n].length)+' palavras');
   const st=store.get('az-stats',{played:0,won:0,streak:0,best:0});
   $('homeStats').innerHTML = statsHTML(st);
-  $('play').textContent = S && !S.done ? 'Continuar jogo' : 'Jogar';
+  const cont = S && !S.done && !differs();
+  $('play').textContent = cont ? 'Continuar jogo' : (RUN.words ? 'Próxima palavra' : 'Jogar');
+  $('warn').hidden = !(inProgress() && differs());
+  const u = Math.max(1, Math.round(prefs.tries/3));
+  $('example').innerHTML = `Com as opções escolhidas, acertar à ${u}.ª tentativa vale <b>${fmt(points(prefs.len,prefs.tries,u))} pontos</b>; à 1.ª vale ${fmt(points(prefs.len,prefs.tries,1))}.`;
+  const R=getRec();
+  $('record').innerHTML = `<div class="record-top"><div><span>Melhor série</span><br><b>${fmt(R.best)}</b></div>
+    <div class="run">Série atual: <b>${fmt(RUN.pts)} pts</b> · ${RUN.words} ${RUN.words===1?'palavra':'palavras'}</div></div>
+    ${R.top.length ? '<ol class="top">'+R.top.map((x,i)=>`<li><span class="pos">${i+1}.</span><span><b>${fmt(x.pts)}</b> pts · ${x.words} ${x.words===1?'palavra':'palavras'}</span><span>${x.date}</span></li>`).join('')+'</ol>' : '<p class="run">Ainda não há séries terminadas. Acerte palavras seguidas para somar pontos.</p>'}`;
 }
 function statsHTML(st){ const pct=st.played?Math.round(st.won*100/st.played):0;
   return `<div><b>${st.played}</b><span>Jogos</span></div><div><b>${pct}%</b><span>Vitórias</span></div><div><b>${st.streak}</b><span>Sequência</span></div><div><b>${st.best}</b><span>Melhor</span></div>`; }
 function choose(id, field, parse){ $(id).addEventListener('click',e=>{ const b=e.target.closest('.choice'); if(!b) return; prefs[field]=parse(b.dataset.v); store.set('az-prefs2',prefs); renderHome(); }); }
 choose('optVar','v',x=>x); choose('optLen','len',Number); choose('optDiff','tries',Number);
 $('play').onclick=()=>{
-  const same = S && !S.done && S.v===prefs.v && S.len===prefs.len;
-  if(same){ if(prefs.tries!==S.tries && S.guesses.length<prefs.tries) S.tries=prefs.tries; else if(prefs.tries!==S.tries) return newGame(); show('game'); }
-  else newGame();
+  if(S && !S.done && !differs()) return show('game');
+  if(inProgress()) { forfeit(); }
+  newGame();
 };
 $('back').onclick=()=>show('home');
 function show(s){ screen=s; $('home').hidden = s!=='home'; $('game').hidden = s!=='game'; if(s==='home') renderHome(); else render(); window.scrollTo(0,0); }
+
+/* ---------- pontuação ---------- */
+let lastEnd = null; // {gain, calc, runEnd, newRecord, finalPts, finalWords}
+function endRun(){
+  const res={finalPts:RUN.pts, finalWords:RUN.words, newRecord:false};
+  if(RUN.pts>0){
+    const R=getRec(); res.newRecord = RUN.pts>R.best;
+    const d=new Date(); const date=d.toLocaleDateString('pt-PT',{day:'2-digit',month:'2-digit',year:'numeric'});
+    R.top.push({pts:RUN.pts, words:RUN.words, date}); R.top.sort((a,b)=>b.pts-a.pts); R.top=R.top.slice(0,5);
+    R.best=Math.max(R.best,RUN.pts); store.set('az-rec',R);
+  }
+  RUN={pts:0,words:0}; return res;
+}
+function recordStats(won){
+  const st=store.get('az-stats',{played:0,won:0,streak:0,best:0});
+  st.played++; if(won){ st.won++; st.streak++; st.best=Math.max(st.best,st.streak); } else st.streak=0;
+  store.set('az-stats',st);
+}
+function forfeit(){ recordStats(false); endRun(); S.done=true; save(); }
 
 /* ---------- game ---------- */
 function newGame(){
@@ -232,7 +305,8 @@ function newGame(){
   const last = store.get('az-last',[]); let secret;
   for(let i=0;i<30;i++){ secret = list[Math.floor(Math.random()*list.length)]; if(!last.includes(secret)) break; }
   store.set('az-last',[secret,...last].slice(0,60));
-  S = {v:prefs.v, len:prefs.len, tries:prefs.tries, secret, key:norm(secret), guesses:[], cur:'', done:false, won:false};
+  S = {v:prefs.v, len:prefs.len, tries:prefs.tries, secret, key:norm(secret), guesses:[], cur:Array(prefs.len).fill(''), pos:0, done:false, won:false};
+  lastEnd=null; save();
   show('game');
 }
 const disp = k => W.disp.common[k] || W.disp[S.v][k] || k;
@@ -247,6 +321,7 @@ let toastT;
 function toast(msg, ms=1800){ const t=$('toast'); t.textContent=msg; t.hidden=false; clearTimeout(toastT); if(ms) toastT=setTimeout(()=>t.hidden=true,ms); }
 
 function render(flipRow=-1){
+  fixCur();
   const b=$('board'); b.style.setProperty('--cols',S.len); b.style.setProperty('--rows',S.tries);
   b.innerHTML='';
   for(let r=0;r<S.tries;r++){
@@ -256,13 +331,16 @@ function render(flipRow=-1){
     for(let c=0;c<S.len;c++){
       const t=document.createElement('div'); t.className='tile';
       if(g){ t.textContent=g.word[c]; t.classList.add(g.res[c]); if(r===flipRow){ t.classList.add('flip'); t.style.animationDelay=(c*110)+'ms'; } }
-      else if(active){ const ch=S.cur[c]; if(ch){ t.textContent=ch; t.classList.add('filled'); } if(c===S.cur.length) t.classList.add('cur'); }
+      else if(active){ const ch=S.cur[c]; if(ch){ t.textContent=ch; t.classList.add('filled'); } if(c===S.pos) t.classList.add('cur'); t.dataset.col=c; t.setAttribute('role','button'); t.setAttribute('aria-label','Posição '+(c+1)); }
       row.appendChild(t);
     }
     b.appendChild(row);
   }
   $('info').innerHTML = `<b>${S.len} letras</b> · ${LBL[S.tries]} · ${VLBL[S.v]}`;
   $('left').innerHTML = S.done ? '' : `Faltam <b>${S.tries - S.guesses.length}</b> de ${S.tries}`;
+  $('runPts').textContent = fmt(RUN.pts)+' pts';
+  $('runWords').textContent = RUN.words ? `série de ${RUN.words} ${RUN.words===1?'palavra':'palavras'}` : 'nova série';
+  $('recLine').innerHTML = `Recorde <b>${fmt(getRec().best)}</b>`;
   renderKb(); renderEnd();
 }
 const ROWS=['qwertyuiop','asdfghjklç','zxcvbnm'];
@@ -281,52 +359,87 @@ function renderKb(){
 }
 function renderEnd(){
   const e=$('end');
+  $('hint').hidden=S.done;
   if(!S.done){ e.hidden=true; $('kb').hidden=false; return; }
-  const st=store.get('az-stats',{played:0,won:0,streak:0,best:0});
-  e.innerHTML = `<h2>${S.won?'Acertou!':'Não foi desta.'}</h2>
-    <p>A palavra era <span class="word">${S.secret}</span>${S.won?`, descoberta em ${S.guesses.length} de ${S.tries} tentativas.`:'.'}</p>
-    <div class="stats">${statsHTML(st)}</div>
-    <div class="btns"><button class="btn" id="again">Jogar outra vez</button><button class="btn ghost" id="opts">Mudar opções</button></div>`;
-  e.hidden=false; $('kb').hidden=true;
+  const L=lastEnd; let body;
+  if(S.won){
+    body = `<h2>Acertou!</h2>
+      <p>A palavra era <span class="word">${S.secret}</span>, descoberta em ${S.guesses.length} de ${S.tries} tentativas.</p>
+      ${L?`<div><span class="gain">+${fmt(L.gain)} pts</span><div class="calc">${L.calc}</div></div>`:''}
+      <p>Série: <b>${fmt(RUN.pts)} pts</b> em ${RUN.words} ${RUN.words===1?'palavra':'palavras'}. Continue para somar mais.</p>
+      <div class="btns"><button class="btn" id="again">Próxima palavra</button><button class="btn ghost" id="opts">Mudar opções</button></div>`;
+  } else {
+    body = `<h2>Não foi desta.</h2>
+      <p>A palavra era <span class="word">${S.secret}</span>.</p>
+      ${L && L.finalPts>0 ? `<p>Fim da série: <b>${fmt(L.finalPts)} pts</b> em ${L.finalWords} ${L.finalWords===1?'palavra':'palavras'}. ${L.newRecord?'<span class="newrec">Novo recorde</span>':`Recorde: ${fmt(getRec().best)} pts.`}</p>` : '<p>A série volta a começar do zero.</p>'}
+      <div class="btns"><button class="btn" id="again">Nova série</button><button class="btn ghost" id="opts">Mudar opções</button></div>`;
+  }
+  e.innerHTML = body; e.hidden=false; $('kb').hidden=true;
   $('again').onclick=()=>newGame();
   $('opts').onclick=()=>show('home');
   $('again').focus({preventScroll:true});
 }
 function shake(){ const r=$('board').children[S.guesses.length]; if(!r) return; r.classList.remove('shake'); void r.offsetWidth; r.classList.add('shake'); }
+function fixCur(){
+  if(typeof S.cur==='string'){ const s=S.cur; S.cur=Array(S.len).fill(''); s.split('').slice(0,S.len).forEach((c,i)=>S.cur[i]=c); S.pos=Math.min(s.length,S.len-1); }
+  if(!Array.isArray(S.cur)||S.cur.length!==S.len) S.cur=Array(S.len).fill('');
+  if(typeof S.pos!=='number') S.pos=S.cur.findIndex(c=>!c); if(S.pos<0) S.pos=S.len-1;
+}
 function press(k){
   if(!S || S.done || screen!=='game') return;
+  fixCur();
   if(k==='Enter') return submit();
-  if(k==='Backspace'){ S.cur=S.cur.slice(0,-1); return render(); }
+  if(k==='ArrowLeft'){ S.pos=Math.max(0,S.pos-1); return render(); }
+  if(k==='ArrowRight'){ S.pos=Math.min(S.len-1,S.pos+1); return render(); }
+  if(k==='Backspace'){
+    if(S.cur[S.pos]) S.cur[S.pos]='';
+    else if(S.pos>0){ S.pos--; S.cur[S.pos]=''; }
+    save(); return render();
+  }
+  if(k==='Delete'){ S.cur[S.pos]=''; save(); return render(); }
   const ch=norm(k.toLowerCase());
-  if(/^[a-z]$/.test(ch) && S.cur.length<S.len){ S.cur+=ch; render(); }
+  if(/^[a-z]$/.test(ch)){
+    S.cur[S.pos]=ch;
+    // avança para a próxima casa vazia à direita; se não houver, para a seguinte
+    let nx=-1; for(let i=S.pos+1;i<S.len;i++){ if(!S.cur[i]){ nx=i; break; } }
+    S.pos = nx>=0 ? nx : Math.min(S.pos+1, S.len-1);
+    save(); render();
+  }
 }
 function submit(){
-  if(S.cur.length<S.len){ toast(`A palavra tem de ter ${S.len} letras`); return shake(); }
-  if(!VALID[S.len].has(S.cur)){ toast('Essa palavra não está no dicionário'); return shake(); }
-  const res=score(S.cur,S.key);
-  const word = S.cur===S.key ? S.secret : disp(S.cur);
-  S.guesses.push({key:S.cur, word, res}); S.cur='';
+  if(S.cur.some(c=>!c)){ toast('Preencha todas as casas'); S.pos=S.cur.findIndex(c=>!c); render(); return shake(); }
+  const g=S.cur.join('');
+  if(!VALID[S.len].has(g)){ toast('Essa palavra não está no dicionário'); return shake(); }
+  const res=score(g,S.key);
+  const word = g===S.key ? S.secret : disp(g);
+  S.guesses.push({key:g, word, res}); S.cur=Array(S.len).fill(''); S.pos=0;
   const row=S.guesses.length-1;
   if(res.every(x=>x==='ok')){ S.done=true; S.won=true; }
   else if(S.guesses.length>=S.tries){ S.done=true; }
   if(S.done){
-    const st=store.get('az-stats',{played:0,won:0,streak:0,best:0});
-    st.played++; if(S.won){ st.won++; st.streak++; st.best=Math.max(st.best,st.streak); } else st.streak=0;
-    store.set('az-stats',st);
+    recordStats(S.won);
+    if(S.won){
+      const used=S.guesses.length, gain=points(S.len,S.tries,used);
+      RUN.pts+=gain; RUN.words++;
+      lastEnd={gain, calc:`${BASE[S.len]} (${S.len} letras) × ${MULT[S.tries]} (${LBL[S.tries]}) × ${S.tries-used+1}/${S.tries} (tentativas)`};
+    } else lastEnd=endRun();
   }
+  save();
   render(row);
 }
+$('board').addEventListener('click',e=>{ const t=e.target.closest('.tile[data-col]'); if(!t||!S||S.done) return; S.pos=+t.dataset.col; render(); });
 $('kb').addEventListener('click',e=>{ const k=e.target.closest('.key'); if(k) press(k.dataset.k); });
 document.addEventListener('keydown',e=>{
   if(screen!=='game' || e.ctrlKey||e.metaKey||e.altKey) return;
   if(e.target.closest && e.target.closest('button:not(.key)')) { if(e.key==='Enter'||e.key===' ') return; }
-  if(e.key==='Enter'||e.key==='Backspace'){ e.preventDefault(); press(e.key); }
+  if(['Enter','Backspace','Delete','ArrowLeft','ArrowRight'].includes(e.key)){ e.preventDefault(); press(e.key); }
   else if(e.key.length===1) press(e.key);
 });
 
-window.claude?.hot?.snapshot?.(()=>({S,screen}));
+window.claude?.hot?.snapshot?.(()=>({S,screen,RUN,lastEnd}));
 function start(data){
-  if(data && data.S && data.S.secret){ S=data.S; show(data.screen||'game'); return; }
+  if(data && data.S && data.S.secret){ S=data.S; if(data.RUN) RUN=data.RUN; lastEnd=data.lastEnd||null; show(data.screen||'game'); return; }
+  if(S && !S.secret) S=null;
   show('home');
 }
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});

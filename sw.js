@@ -1,6 +1,6 @@
 // Azulejo das Palavras - service worker (funcionamento offline)
 // Ao publicar uma nova versão, aumente o número abaixo.
-const VERSION = 'azulejo-v1';
+const VERSION = 'azulejo-v5';
 const FILES = ['./', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png', './icons/favicon.png'];
